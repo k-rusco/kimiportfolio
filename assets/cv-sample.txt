@@ -1,0 +1,21 @@
+Kimi Studio - Curriculum Vitae (Sample)
+
+Name: Your Name
+Role: Interaction Design Student / Freelance Designer
+Email: hello@kimistudio.com
+
+Education:
+- Bachelor in Interaction Design (ongoing)
+
+Experience:
+- Freelance Designer (2022-Present)
+- Design Intern (2024)
+
+Skills:
+- Figma
+- Adobe Creative Suite
+- Interaction Design
+- Visual Identity
+- Prototyping
+
+Replace this file with your real PDF CV when ready.
