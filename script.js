@@ -56,25 +56,30 @@ if (carousel) {
   centerCarouselInitialFeatured(carousel);
 }
 
-const filterButtons = document.querySelectorAll(".filter-btn");
-const filterItems = document.querySelectorAll(".filter-item");
+// Filters and the gallery lightbox are initialized by projects-data.js AFTER
+// the project cards / detail content have been fetched and rendered, since
+// those elements don't exist at initial page load anymore.
+function initProjectFilters() {
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const filterItems = document.querySelectorAll(".filter-item");
 
-function applyFilter(selectedCategory) {
-  filterButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.filter === selectedCategory);
-  });
+  if (filterButtons.length === 0) return;
 
-  filterItems.forEach((item) => {
-    const itemCategories = item.dataset.category || "";
-    const shouldShow =
-      !!selectedCategory &&
-      (selectedCategory === "all" || itemCategories.includes(selectedCategory));
+  function applyFilter(selectedCategory) {
+    filterButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.filter === selectedCategory);
+    });
 
-    item.style.display = shouldShow ? "block" : "none";
-  });
-}
+    filterItems.forEach((item) => {
+      const itemCategories = item.dataset.category || "";
+      const shouldShow =
+        !!selectedCategory &&
+        (selectedCategory === "all" || itemCategories.includes(selectedCategory));
 
-if (filterButtons.length > 0) {
+      item.style.display = shouldShow ? "block" : "none";
+    });
+  }
+
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
       applyFilter(button.dataset.filter);
@@ -86,36 +91,27 @@ if (filterButtons.length > 0) {
   applyFilter(initialFilter);
 }
 
-const projectTitle = document.getElementById("project-title");
+function initProjectBackLink() {
+  const backLink = document.querySelector(".project-back-link");
+  if (!backLink) return;
 
-if (projectTitle) {
-  const params = new URLSearchParams(window.location.search);
-  const projectName = params.get("project");
-
-  if (projectName) {
-    projectTitle.textContent = projectName;
-    document.title = `Portfolio | ${projectName}`;
-  }
-}
-
-const backLink = document.querySelector(".project-back-link");
-if (backLink) {
   const ref = document.referrer;
   if (ref && ref.includes("portfolio.html")) {
     try {
       const refUrl = new URL(ref);
       const filterParam = refUrl.searchParams.get("filter");
       backLink.href = filterParam
-        ? `../portfolio.html?filter=${filterParam}`
-        : "../portfolio.html";
+        ? `portfolio.html?filter=${filterParam}`
+        : "portfolio.html";
     } catch (_) {
-      backLink.href = "../portfolio.html";
+      backLink.href = "portfolio.html";
     }
   }
 }
 
-const galleryOverlay = document.querySelector(".project-gallery-overlay");
-if (galleryOverlay) {
+function initGalleryLightbox() {
+  const galleryOverlay = document.querySelector(".project-gallery-overlay");
+  if (!galleryOverlay) return;
   const galleryImg = galleryOverlay.querySelector(".gallery-current-img");
   let galleryVideo = galleryOverlay.querySelector(".gallery-current-video");
   if (!galleryVideo) {
