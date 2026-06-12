@@ -5,7 +5,8 @@ const SANITY_API_BASE = `https://${SANITY_PROJECT_ID}.apicdn.sanity.io/v2024-01-
 const PROJECT_FIELDS = `
   title, "slug": slug.current, year, medium, category, description, featured, youtubeUrl,
   "thumb": thumbnail.asset->url, "thumbHover": thumbnailHover.asset->url,
-  "hero": heroImage.asset->url, "gallery": gallery[].asset->url
+  "hero": heroImage.asset->url,
+  "gallery": gallery[]{ "url": asset->url, youtubeUrl }
 `;
 
 async function sanityQuery(query, params = {}) {
@@ -42,7 +43,7 @@ function youtubeEmbedSrc(rawUrl) {
     let id = '';
     if (url.hostname.includes('youtu.be')) {
       id = url.pathname.slice(1).split('/')[0];
-    } else if (url.pathname.startsWith('/embed/')) {
+    } else if (url.pathname.startsWith('/embed/') || url.pathname.startsWith('/shorts/')) {
       id = url.pathname.split('/')[2];
     } else {
       id = url.searchParams.get('v') || '';
@@ -201,11 +202,14 @@ function renderProjectDetail(section, project) {
   if (Array.isArray(project.gallery) && project.gallery.length > 0) {
     const thumbs = document.createElement('div');
     thumbs.className = 'project-thumbs';
-    project.gallery.forEach((imageUrl) => {
+    project.gallery.forEach((item) => {
       const thumb = document.createElement('img');
       thumb.className = 'project-thumb-img project-gallery-trigger';
-      thumb.src = sanityImage(imageUrl, 1600);
+      thumb.src = sanityImage(item.url, 1600);
       thumb.alt = project.title;
+      if (item.youtubeUrl) {
+        thumb.dataset.galleryYoutube = youtubeEmbedSrc(item.youtubeUrl);
+      }
       thumbs.appendChild(thumb);
     });
     images.appendChild(thumbs);
