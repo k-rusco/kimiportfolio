@@ -72,9 +72,11 @@ function initProjectFilters() {
 
     filterItems.forEach((item) => {
       const itemCategories = item.dataset.category || "";
+      // No selected category means "show everything".
       const shouldShow =
-        !!selectedCategory &&
-        (selectedCategory === "all" || itemCategories.includes(selectedCategory));
+        !selectedCategory ||
+        selectedCategory === "all" ||
+        itemCategories.includes(selectedCategory);
 
       item.style.display = shouldShow ? "block" : "none";
     });
@@ -82,7 +84,8 @@ function initProjectFilters() {
 
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      applyFilter(button.dataset.filter);
+      const isActive = button.classList.contains("active");
+      applyFilter(isActive ? null : button.dataset.filter);
     });
   });
 
